@@ -12,8 +12,7 @@ services:
     buildCommand: |
       npm install -g pnpm@9.1.0 &&
       NODE_ENV=development pnpm install &&
-      pnpm --filter @grevoro/api prisma generate &&
-      pnpm --filter @grevoro/api build
+      pnpm --filter @grevoro/api prisma generate
     startCommand: pnpm --filter @grevoro/api start
     envVars:
       - key: NODE_ENV
