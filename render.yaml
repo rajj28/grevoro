@@ -60,15 +60,11 @@ services:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: grevoro-api
-          property: url
+        # Set this after grevoro-api deploys: https://grevoro-api.onrender.com
+        sync: false
       - key: NEXT_PUBLIC_WS_URL
-        fromService:
-          type: web
-          name: grevoro-api
-          property: url
+        # Same as API URL: https://grevoro-api.onrender.com  
+        sync: false
     autoDeploy: true
 
   # ─── Worker Service ────────────────────────────────────────────────────────
@@ -132,10 +128,8 @@ services:
           name: grevoro-api
           envVarKey: S3_PUBLIC_URL
       - key: API_URL
-        fromService:
-          type: web
-          name: grevoro-api
-          property: url
+        # Set this after grevoro-api deploys: https://grevoro-api.onrender.com
+        sync: false
     autoDeploy: true
 
   # ─── ML Service (Python/FastAPI) ─────────────────────────────────────────────
@@ -153,6 +147,5 @@ services:
         value: 3.11.0
     autoDeploy: true
 
-databases:
-  # Note: Using external Neon Postgres, Upstash Redis, MongoDB Atlas
-  # These are configured via env vars, not Render managed databases
+# Note: Using external Neon Postgres, Upstash Redis, MongoDB Atlas
+# These are configured via env vars, not Render managed databases
