@@ -1,0 +1,33 @@
+{
+  "name": "GREVORO — Waste Traceability",
+  "short_name": "GREVORO",
+  "description": "Track every gram, trust every step. Waste traceability for informal recycling networks.",
+  "start_url": "/portal",
+  "display": "standalone",
+  "background_color": "#F6F1E7",
+  "theme_color": "#1F3D2B",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "en-IN",
+  "dir": "ltr",
+  "shortcuts": [
+    {
+      "name": "My Batches",
+      "short_name": "Batches",
+      "description": "View my waste batches",
+      "url": "/portal/household",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Impact Dashboard",
+      "short_name": "Impact",
+      "description": "Live impact statistics",
+      "url": "/impact",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

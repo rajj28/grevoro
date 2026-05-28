@@ -1,0 +1,31 @@
+{
+  "name": "@grevoro/worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@grevoro/shared": "workspace:*",
+    "@prisma/client": "5.22.0",
+    "@aws-sdk/client-s3": "^3.600.0",
+    "axios": "^1.7.2",
+    "bullmq": "^5.12.0",
+    "dotenv": "^16.4.5",
+    "ioredis": "^5.4.1",
+    "mongoose": "^8.4.3",
+    "socket.io-client": "^4.7.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "prisma": "5.22.0",
+    "tsx": "^4.15.7",
+    "typescript": "^5.4.5"
+  },
+  "prisma": {
+    "schema": "../../infra/prisma/schema.prisma"
+  }
+}
