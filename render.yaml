@@ -7,7 +7,7 @@ services:
   - type: web
     name: grevoro-api
     runtime: node
-    plan: starter
+    plan: free
     region: ohio
     buildCommand: |
       npm install -g pnpm@9.1.0 &&
@@ -49,7 +49,7 @@ services:
   - type: web
     name: grevoro-web
     runtime: node
-    plan: starter
+    plan: free
     region: ohio
     buildCommand: |
       npm install -g pnpm@9.1.0 &&
@@ -67,76 +67,11 @@ services:
         sync: false
     autoDeploy: true
 
-  # ─── Worker Service ────────────────────────────────────────────────────────
-  - type: worker
-    name: grevoro-worker
-    runtime: node
-    plan: starter
-    region: ohio
-    buildCommand: |
-      npm install -g pnpm@9.1.0 &&
-      pnpm install &&
-      pnpm --filter @grevoro/worker prisma generate &&
-      pnpm --filter @grevoro/worker build
-    startCommand: pnpm --filter @grevoro/worker start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: DATABASE_URL
-        fromService:
-          type: web
-          name: grevoro-api
-          envVarKey: DATABASE_URL
-      - key: REDIS_URL
-        fromService:
-          type: web
-          name: grevoro-api
-          envVarKey: REDIS_URL
-      - key: MONGO_URL
-        fromService:
-          type: web
-          name: grevoro-api
-          envVarKey: MONGO_URL
-      - key: S3_ENDPOINT
-        fromService:
-          type: web
-          name: grevoro-api
-          envVarKey: S3_ENDPOINT
-      - key: S3_BUCKET
-        fromService:
-          type: web
-          name: grevoro-api
-          envVarKey: S3_BUCKET
-      - key: S3_ACCESS_KEY_ID
-        fromService:
-          type: web
-          name: grevoro-api
-          envVarKey: S3_ACCESS_KEY_ID
-      - key: S3_SECRET_ACCESS_KEY
-        fromService:
-          type: web
-          name: grevoro-api
-          envVarKey: S3_SECRET_ACCESS_KEY
-      - key: S3_REGION
-        fromService:
-          type: web
-          name: grevoro-api
-          envVarKey: S3_REGION
-      - key: S3_PUBLIC_URL
-        fromService:
-          type: web
-          name: grevoro-api
-          envVarKey: S3_PUBLIC_URL
-      - key: API_URL
-        # Set this after grevoro-api deploys: https://grevoro-api.onrender.com
-        sync: false
-    autoDeploy: true
-
   # ─── ML Service (Python/FastAPI) ─────────────────────────────────────────────
   - type: web
     name: grevoro-ml
     runtime: python
-    plan: starter
+    plan: free
     region: ohio
     buildCommand: |
       cd apps/ml &&
