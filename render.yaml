@@ -11,7 +11,7 @@ services:
     region: ohio
     buildCommand: |
       npm install -g pnpm@9.1.0 &&
-      pnpm install &&
+      NODE_ENV=development pnpm install &&
       pnpm --filter @grevoro/api prisma generate &&
       pnpm --filter @grevoro/api build
     startCommand: pnpm --filter @grevoro/api start
@@ -53,7 +53,7 @@ services:
     region: ohio
     buildCommand: |
       npm install -g pnpm@9.1.0 &&
-      pnpm install &&
+      NODE_ENV=development pnpm install &&
       pnpm --filter @grevoro/web build
     startCommand: pnpm --filter @grevoro/web start
     envVars:
