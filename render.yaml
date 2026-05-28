@@ -1,0 +1,158 @@
+# GREVORO - Render Blueprint
+# Multi-service deployment for waste flow traceability platform
+# Deploy: Copy this file to render.yaml at repo root and click "New Blueprint Instance"
+
+services:
+  # ─── API Service ─────────────────────────────────────────────────────────────
+  - type: web
+    name: grevoro-api
+    runtime: node
+    plan: starter
+    region: ohio
+    buildCommand: |
+      npm install -g pnpm@9.1.0 &&
+      pnpm install &&
+      pnpm --filter @grevoro/api prisma generate &&
+      pnpm --filter @grevoro/api build
+    startCommand: pnpm --filter @grevoro/api start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: MONGO_URL
+        sync: false
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_BUCKET
+        value: grevoro-media
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_REGION
+        value: auto
+      - key: S3_PUBLIC_URL
+        sync: false
+      - key: API_PORT
+        value: 10000
+    healthCheckPath: /health
+    autoDeploy: true
+
+  # ─── Web Frontend ────────────────────────────────────────────────────────────
+  - type: web
+    name: grevoro-web
+    runtime: node
+    plan: starter
+    region: ohio
+    buildCommand: |
+      npm install -g pnpm@9.1.0 &&
+      pnpm install &&
+      pnpm --filter @grevoro/web build
+    startCommand: pnpm --filter @grevoro/web start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: grevoro-api
+          property: url
+      - key: NEXT_PUBLIC_WS_URL
+        fromService:
+          type: web
+          name: grevoro-api
+          property: url
+    autoDeploy: true
+
+  # ─── Worker Service ────────────────────────────────────────────────────────
+  - type: worker
+    name: grevoro-worker
+    runtime: node
+    plan: starter
+    region: ohio
+    buildCommand: |
+      npm install -g pnpm@9.1.0 &&
+      pnpm install &&
+      pnpm --filter @grevoro/worker prisma generate &&
+      pnpm --filter @grevoro/worker build
+    startCommand: pnpm --filter @grevoro/worker start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromService:
+          type: web
+          name: grevoro-api
+          envVarKey: DATABASE_URL
+      - key: REDIS_URL
+        fromService:
+          type: web
+          name: grevoro-api
+          envVarKey: REDIS_URL
+      - key: MONGO_URL
+        fromService:
+          type: web
+          name: grevoro-api
+          envVarKey: MONGO_URL
+      - key: S3_ENDPOINT
+        fromService:
+          type: web
+          name: grevoro-api
+          envVarKey: S3_ENDPOINT
+      - key: S3_BUCKET
+        fromService:
+          type: web
+          name: grevoro-api
+          envVarKey: S3_BUCKET
+      - key: S3_ACCESS_KEY_ID
+        fromService:
+          type: web
+          name: grevoro-api
+          envVarKey: S3_ACCESS_KEY_ID
+      - key: S3_SECRET_ACCESS_KEY
+        fromService:
+          type: web
+          name: grevoro-api
+          envVarKey: S3_SECRET_ACCESS_KEY
+      - key: S3_REGION
+        fromService:
+          type: web
+          name: grevoro-api
+          envVarKey: S3_REGION
+      - key: S3_PUBLIC_URL
+        fromService:
+          type: web
+          name: grevoro-api
+          envVarKey: S3_PUBLIC_URL
+      - key: API_URL
+        fromService:
+          type: web
+          name: grevoro-api
+          property: url
+    autoDeploy: true
+
+  # ─── ML Service (Python/FastAPI) ─────────────────────────────────────────────
+  - type: web
+    name: grevoro-ml
+    runtime: python
+    plan: starter
+    region: ohio
+    buildCommand: |
+      cd apps/ml &&
+      pip install -r requirements.txt
+    startCommand: cd apps/ml && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    autoDeploy: true
+
+databases:
+  # Note: Using external Neon Postgres, Upstash Redis, MongoDB Atlas
+  # These are configured via env vars, not Render managed databases
